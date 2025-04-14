@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://ctqh7ecdiu362"]
+[gd_scene load_steps=15 format=3 uid="uid://ctqh7ecdiu362"]
 
 [ext_resource type="Texture2D" uid="uid://bubnamdsmqsxw" path="res://assets/test_char.png" id="1_62ttk"]
 [ext_resource type="Script" uid="uid://p0i6gjcipj4s" path="res://scripts/sparky.gd" id="1_tlrw5"]
@@ -6,6 +6,10 @@
 [ext_resource type="Script" uid="uid://0e16sf5bse08" path="res://scenes/sparky/move_component.gd" id="3_ixvkc"]
 [ext_resource type="Script" uid="uid://ccniqkea0jmt7" path="res://states/move.gd" id="4_7i425"]
 [ext_resource type="Script" uid="uid://dmqalbt5ayhay" path="res://states/idle.gd" id="5_ixvkc"]
+[ext_resource type="Script" uid="uid://igx7ipcwlob5" path="res://states/fall.gd" id="5_ncn2n"]
+[ext_resource type="Script" uid="uid://dtgrbnpu122fn" path="res://states/jump.gd" id="7_rylcs"]
+[ext_resource type="Script" uid="uid://bu6h8qarwcqlt" path="res://states/grapple.gd" id="9_e72oe"]
+[ext_resource type="Script" uid="uid://78np8pujasyc" path="res://states/metal_swim.gd" id="10_m53ok"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_541pj"]
 atlas = ExtResource("1_62ttk")
@@ -52,15 +56,36 @@ shape = SubResource("CapsuleShape2D_tlrw5")
 [node name="MoveComponent" type="Node" parent="."]
 script = ExtResource("3_ixvkc")
 
-[node name="StateMachine" type="Node" parent="."]
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("starting_state")]
 script = ExtResource("3_dv10o")
+starting_state = NodePath("Idle")
 
-[node name="Move" type="Node" parent="StateMachine"]
-script = ExtResource("4_7i425")
+[node name="Fall" type="Node" parent="StateMachine" node_paths=PackedStringArray("idle_state", "move_state", "jump_state")]
+script = ExtResource("5_ncn2n")
+idle_state = NodePath("../Idle")
+move_state = NodePath("../Move")
+jump_state = NodePath("../Jump")
 
-[node name="Jump" type="Node" parent="StateMachine"]
-
-[node name="Fall" type="Node" parent="StateMachine"]
-
-[node name="Idle" type="Node" parent="StateMachine"]
+[node name="Idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("move_state", "jump_state", "fall_state")]
 script = ExtResource("5_ixvkc")
+move_state = NodePath("../Move")
+jump_state = NodePath("../Jump")
+fall_state = NodePath("../Fall")
+
+[node name="Move" type="Node" parent="StateMachine" node_paths=PackedStringArray("fall_state", "idle_state", "jump_state")]
+script = ExtResource("4_7i425")
+fall_state = NodePath("../Fall")
+idle_state = NodePath("../Idle")
+jump_state = NodePath("../Jump")
+
+[node name="Jump" type="Node" parent="StateMachine" node_paths=PackedStringArray("fall_state", "idle_state", "move_state")]
+script = ExtResource("7_rylcs")
+fall_state = NodePath("../Fall")
+idle_state = NodePath("../Idle")
+move_state = NodePath("../Move")
+
+[node name="Grapple" type="Node" parent="StateMachine"]
+script = ExtResource("9_e72oe")
+
+[node name="MetalSwim" type="Node" parent="StateMachine"]
+script = ExtResource("10_m53ok")
