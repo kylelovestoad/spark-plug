@@ -1,0 +1,66 @@
+[gd_scene load_steps=11 format=3 uid="uid://ctqh7ecdiu362"]
+
+[ext_resource type="Texture2D" uid="uid://bubnamdsmqsxw" path="res://assets/test_char.png" id="1_62ttk"]
+[ext_resource type="Script" uid="uid://p0i6gjcipj4s" path="res://scripts/sparky.gd" id="1_tlrw5"]
+[ext_resource type="Script" uid="uid://bcrvk670ryqp3" path="res://scripts/state_machine.gd" id="3_dv10o"]
+[ext_resource type="Script" uid="uid://0e16sf5bse08" path="res://scenes/sparky/move_component.gd" id="3_ixvkc"]
+[ext_resource type="Script" uid="uid://ccniqkea0jmt7" path="res://states/move.gd" id="4_7i425"]
+[ext_resource type="Script" uid="uid://dmqalbt5ayhay" path="res://states/idle.gd" id="5_ixvkc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_541pj"]
+atlas = ExtResource("1_62ttk")
+region = Rect2(0, 0, 40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wg4aa"]
+atlas = ExtResource("1_62ttk")
+region = Rect2(40, 0, 40, 40)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_enmwf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_541pj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wg4aa")
+}],
+"loop": true,
+"name": &"new_animation",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tlrw5"]
+radius = 3.0
+height = 8.0
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+script = ExtResource("1_tlrw5")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(6, 6)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(2.01948e-28, -5)
+scale = Vector2(0.2875, 0.275)
+sprite_frames = SubResource("SpriteFrames_enmwf")
+animation = &"new_animation"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -4)
+shape = SubResource("CapsuleShape2D_tlrw5")
+
+[node name="MoveComponent" type="Node" parent="."]
+script = ExtResource("3_ixvkc")
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("3_dv10o")
+
+[node name="Move" type="Node" parent="StateMachine"]
+script = ExtResource("4_7i425")
+
+[node name="Jump" type="Node" parent="StateMachine"]
+
+[node name="Fall" type="Node" parent="StateMachine"]
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("5_ixvkc")
