@@ -3,13 +3,13 @@
 [ext_resource type="Texture2D" uid="uid://bubnamdsmqsxw" path="res://assets/test_char.png" id="1_62ttk"]
 [ext_resource type="Script" uid="uid://p0i6gjcipj4s" path="res://scripts/sparky.gd" id="1_tlrw5"]
 [ext_resource type="Script" uid="uid://bcrvk670ryqp3" path="res://scripts/state_machine.gd" id="3_dv10o"]
-[ext_resource type="Script" uid="uid://0e16sf5bse08" path="res://scenes/sparky/move_component.gd" id="3_ixvkc"]
-[ext_resource type="Script" uid="uid://ccniqkea0jmt7" path="res://states/move.gd" id="4_7i425"]
-[ext_resource type="Script" uid="uid://dmqalbt5ayhay" path="res://states/idle.gd" id="5_ixvkc"]
-[ext_resource type="Script" uid="uid://igx7ipcwlob5" path="res://states/fall.gd" id="5_ncn2n"]
-[ext_resource type="Script" uid="uid://dtgrbnpu122fn" path="res://states/jump.gd" id="7_rylcs"]
-[ext_resource type="Script" uid="uid://bu6h8qarwcqlt" path="res://states/grapple.gd" id="9_e72oe"]
-[ext_resource type="Script" uid="uid://78np8pujasyc" path="res://states/metal_swim.gd" id="10_m53ok"]
+[ext_resource type="Script" uid="uid://0e16sf5bse08" path="res://scripts/components/move_component.gd" id="3_ixvkc"]
+[ext_resource type="Script" uid="uid://ccniqkea0jmt7" path="res://scripts/states/move.gd" id="4_7i425"]
+[ext_resource type="Script" uid="uid://dmqalbt5ayhay" path="res://scripts/states/idle.gd" id="5_ixvkc"]
+[ext_resource type="Script" uid="uid://igx7ipcwlob5" path="res://scripts/states/fall.gd" id="5_ncn2n"]
+[ext_resource type="Script" uid="uid://dtgrbnpu122fn" path="res://scripts/states/jump.gd" id="7_rylcs"]
+[ext_resource type="Script" uid="uid://bu6h8qarwcqlt" path="res://scripts/states/grapple.gd" id="9_e72oe"]
+[ext_resource type="Script" uid="uid://78np8pujasyc" path="res://scripts/states/metal_swim.gd" id="10_m53ok"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_541pj"]
 atlas = ExtResource("1_62ttk")
@@ -39,6 +39,12 @@ height = 8.0
 
 [node name="CharacterBody2D" type="CharacterBody2D"]
 script = ExtResource("1_tlrw5")
+jump_height = 15.0
+jump_time_to_peak = 0.2
+jump_time_to_descent = 0.2
+turn_acceleration = 1600
+air_turn_acceleration = 1600
+hold_jump_accel = -400.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(6, 6)
@@ -56,9 +62,10 @@ shape = SubResource("CapsuleShape2D_tlrw5")
 [node name="MoveComponent" type="Node" parent="."]
 script = ExtResource("3_ixvkc")
 
-[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("starting_state")]
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("starting_state", "debug_label")]
 script = ExtResource("3_dv10o")
 starting_state = NodePath("Idle")
+debug_label = NodePath("../Label")
 
 [node name="Fall" type="Node" parent="StateMachine" node_paths=PackedStringArray("idle_state", "move_state", "jump_state")]
 script = ExtResource("5_ncn2n")
@@ -89,3 +96,10 @@ script = ExtResource("9_e72oe")
 
 [node name="MetalSwim" type="Node" parent="StateMachine"]
 script = ExtResource("10_m53ok")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -20.0
+offset_top = -33.0
+offset_right = 20.0
+offset_bottom = -10.0
+text = "State"

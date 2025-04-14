@@ -5,6 +5,9 @@ var starting_state: State
 
 var current_state: State
 
+@export
+var debug_label: Label
+
 func init(parent: CharacterBody2D) -> void:
 	for child in get_children():
 		child.parent = parent
@@ -12,6 +15,9 @@ func init(parent: CharacterBody2D) -> void:
 	transition_to(starting_state)
 
 func transition_to(new_state: State) -> void:
+	if debug_label:
+		debug_label.text = str(new_state.get_name())
+		
 	if current_state:
 		current_state.exit()
 
