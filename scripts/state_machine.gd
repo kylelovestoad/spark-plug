@@ -24,6 +24,9 @@ func transition_to(new_state: State) -> void:
 	current_state = new_state
 	current_state.enter()
 	
+func draw() -> void:
+	current_state.draw()
+	
 func process_physics(delta: float) -> void:
 	var new_state = current_state.process_physics(delta)
 	if new_state:

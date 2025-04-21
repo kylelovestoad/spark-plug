@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://bhtsf067tb76x"]
+
+[ext_resource type="PackedScene" uid="uid://dst384jghavpv" path="res://scenes/room.tscn" id="1_586c8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_586c8"]
+size = Vector2(1280, 400)
+
+[node name="Room" instance=ExtResource("1_586c8")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="0"]
+shape = SubResource("RectangleShape2D_586c8")

@@ -6,6 +6,8 @@ var fall_state: State
 var idle_state: State
 @export
 var move_state: State
+@export
+var grapple_state: State
 
 # When the state is entered
 func enter() -> void:
@@ -26,11 +28,16 @@ func process_frame(delta: float) -> State:
 
 # Physics processing for the state
 func process_physics(delta: float) -> State:
+	var result = parent.try_grapple()
+	if result:
+		parent.grapple_position = result.position
+		return grapple_state
+	
 	if not parent.holding_jump and parent.move_component.try_jump() and parent.jumps > 0:
 		# Re-enter jump since sparky is double jumping
 		return self
 	
-	parent.velocity += parent.test_me() * delta
+	parent.velocity += parent.gravity() * delta
 
 	# Variable jump height based on how long the jump is held
 	if parent.holding_jump and parent.move_component.try_hold_jump():

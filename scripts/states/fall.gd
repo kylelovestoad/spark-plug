@@ -6,9 +6,16 @@ var idle_state: State
 var move_state: State
 @export
 var jump_state: State
+@export
+var grapple_state: State
 
 # Physics processing for the state
 func process_physics(delta: float) -> State:
+	
+	var result = parent.try_grapple()
+	if result:
+		parent.grapple_position = result.position
+		return grapple_state
 	
 	if parent.coyote_time > 0.0:
 		parent.coyote_time -= delta
@@ -16,7 +23,7 @@ func process_physics(delta: float) -> State:
 		parent.jumps -= 1 # Remove a jump when falling
 		parent.coyote_jump = false
 		
-	parent.velocity += parent.test_me() * delta
+	parent.velocity += parent.gravity() * delta
 
 	# Horizontal air movement
 	var direction = parent.move_component.try_movement().x
@@ -45,6 +52,7 @@ func process_physics(delta: float) -> State:
 	# The player is done the jump
 	if parent.is_on_floor():
 		parent.jumps = parent.max_jumps
+		parent.grapples = parent.max_grapples
 		
 		if parent.jump_buffered:
 			return jump_state

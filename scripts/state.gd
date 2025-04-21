@@ -11,6 +11,9 @@ func enter() -> void:
 func exit() -> void:
 	return
 
+func draw() -> void:
+	return
+
 # Input processing for the state
 func process_input(event: InputEvent) -> State:
 	return null

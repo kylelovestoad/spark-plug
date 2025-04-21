@@ -6,6 +6,8 @@ var fall_state: State
 var idle_state: State
 @export
 var jump_state: State
+@export
+var grapple_state: State
 
 func enter() -> void:
 	super()
@@ -14,8 +16,13 @@ func process_physics(delta: float) -> State:
 	
 	if parent.move_component.try_jump():
 		return jump_state
+		
+	var result = parent.try_grapple()
+	if result:
+		parent.grapple_position = result.position
+		return grapple_state
 
-	parent.velocity += parent.test_me() * delta
+	parent.velocity += parent.gravity() * delta
 
 	var direction = parent.move_component.try_movement().x
 	var target_speed = direction * parent.move_speed

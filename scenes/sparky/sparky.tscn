@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://ctqh7ecdiu362"]
+[gd_scene load_steps=16 format=3 uid="uid://ctqh7ecdiu362"]
 
 [ext_resource type="Texture2D" uid="uid://bubnamdsmqsxw" path="res://assets/test_char.png" id="1_62ttk"]
 [ext_resource type="Script" uid="uid://p0i6gjcipj4s" path="res://scripts/sparky.gd" id="1_tlrw5"]
@@ -37,14 +37,16 @@ animations = [{
 radius = 3.0
 height = 8.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m53ok"]
+size = Vector2(8, 8)
+
 [node name="CharacterBody2D" type="CharacterBody2D"]
 script = ExtResource("1_tlrw5")
-jump_height = 15.0
-jump_time_to_peak = 0.2
-jump_time_to_descent = 0.2
+jump_ascend_time = 0.2
+jump_descend_time = 0.17
+max_grapple_time = 0.15
 turn_acceleration = 1600
 air_turn_acceleration = 1600
-hold_jump_accel = -400.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(6, 6)
@@ -59,6 +61,14 @@ animation = &"new_animation"
 position = Vector2(0, -4)
 shape = SubResource("CapsuleShape2D_tlrw5")
 
+[node name="RoomHitBox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 16
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RoomHitBox"]
+position = Vector2(0, -4)
+shape = SubResource("RectangleShape2D_m53ok")
+
 [node name="MoveComponent" type="Node" parent="."]
 script = ExtResource("3_ixvkc")
 
@@ -67,32 +77,41 @@ script = ExtResource("3_dv10o")
 starting_state = NodePath("Idle")
 debug_label = NodePath("../Label")
 
-[node name="Fall" type="Node" parent="StateMachine" node_paths=PackedStringArray("idle_state", "move_state", "jump_state")]
+[node name="Fall" type="Node" parent="StateMachine" node_paths=PackedStringArray("idle_state", "move_state", "jump_state", "grapple_state")]
 script = ExtResource("5_ncn2n")
 idle_state = NodePath("../Idle")
 move_state = NodePath("../Move")
 jump_state = NodePath("../Jump")
+grapple_state = NodePath("../Grapple")
 
-[node name="Idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("move_state", "jump_state", "fall_state")]
+[node name="Idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("move_state", "jump_state", "fall_state", "grapple_state", "metalswim_state")]
 script = ExtResource("5_ixvkc")
 move_state = NodePath("../Move")
 jump_state = NodePath("../Jump")
 fall_state = NodePath("../Fall")
+grapple_state = NodePath("../Grapple")
+metalswim_state = NodePath("../MetalSwim")
 
-[node name="Move" type="Node" parent="StateMachine" node_paths=PackedStringArray("fall_state", "idle_state", "jump_state")]
+[node name="Move" type="Node" parent="StateMachine" node_paths=PackedStringArray("fall_state", "idle_state", "jump_state", "grapple_state")]
 script = ExtResource("4_7i425")
 fall_state = NodePath("../Fall")
 idle_state = NodePath("../Idle")
 jump_state = NodePath("../Jump")
+grapple_state = NodePath("../Grapple")
 
-[node name="Jump" type="Node" parent="StateMachine" node_paths=PackedStringArray("fall_state", "idle_state", "move_state")]
+[node name="Jump" type="Node" parent="StateMachine" node_paths=PackedStringArray("fall_state", "idle_state", "move_state", "grapple_state")]
 script = ExtResource("7_rylcs")
 fall_state = NodePath("../Fall")
 idle_state = NodePath("../Idle")
 move_state = NodePath("../Move")
+grapple_state = NodePath("../Grapple")
 
-[node name="Grapple" type="Node" parent="StateMachine"]
+[node name="Grapple" type="Node" parent="StateMachine" node_paths=PackedStringArray("idle_state", "fall_state", "move_state", "jump_state")]
 script = ExtResource("9_e72oe")
+idle_state = NodePath("../Idle")
+fall_state = NodePath("../Fall")
+move_state = NodePath("../Move")
+jump_state = NodePath("../Jump")
 
 [node name="MetalSwim" type="Node" parent="StateMachine"]
 script = ExtResource("10_m53ok")
@@ -103,3 +122,7 @@ offset_top = -33.0
 offset_right = 20.0
 offset_bottom = -10.0
 text = "State"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[connection signal="area_entered" from="RoomHitBox" to="." method="_on_room_hit_box_area_entered"]
