@@ -51,7 +51,7 @@ var grapple_position = Vector2.ZERO
 var grapple_range: float = 10000
 
 @export
-var max_grapple_time: float = 0.1
+var grapple_speed: float = 500
 
 @export 
 var move_acceleration = 1000
@@ -103,10 +103,10 @@ var game_over_scene: PackedScene
 @onready
 var current_spawn = global_position
 
-var total_deaths = 0
+@onready
+var smoothing = false
 
 func _ready() -> void:
-	
 	state_machine.init(self)
 	
 func _draw() -> void:
@@ -121,6 +121,7 @@ func _physics_process(delta: float) -> void:
 		
 
 func _process(delta: float) -> void:
+	# FIXME, Look out for this in the future, this could cause performance bugs?
 	queue_redraw()
 	state_machine.process_frame(delta)
 	
@@ -190,6 +191,14 @@ func _on_room_hit_box_area_entered(area: Area2D) -> void:
 		room_size.x = view_size.x
 			
 	update_camera_limits(collision, room_size)
+	
+	# The first time the player enters into the scene, smoothing won't be there because it looks better
+	# This turns them on afterwards
+	# HACK fix this because it's bad design, but it works
+	if not smoothing:
+		smoothing = true
+		camera.limit_smoothed = smoothing
+		camera.position_smoothing_enabled = smoothing
 
 func _on_died() -> void:
 	health_component.alive = false
@@ -209,6 +218,17 @@ func respawn() -> void:
 	visible = true
 	health_component.respawn()
 	
+func try_collide_metal() -> TileMapLayer:
+	var collision = get_last_slide_collision()
+	if collision and collision.get_collider() is TileMapLayer:
+		var layer = collision.get_collider() as TileMapLayer
+		if layer:
+			var tile_pos = layer.local_to_map(collision.get_position())
+			var tile_data = layer.get_cell_tile_data(tile_pos)
+			if tile_data and tile_data.get_custom_data("Metal"):
+				return layer
+	return null
+
 func game_over() -> void:
 	get_tree().change_scene_to_packed(game_over_scene)
 	

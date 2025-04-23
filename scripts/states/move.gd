@@ -8,6 +8,8 @@ var idle_state: State
 var jump_state: State
 @export
 var grapple_state: State
+@export
+var metalswim_state: State
 
 @export
 var animations: AnimatedSprite2D
@@ -49,6 +51,11 @@ func process_physics(delta: float) -> State:
 	
 	parent.velocity.x = movement
 	parent.move_and_slide()
+	
+	var layer: TileMapLayer = parent.try_collide_metal()
+	if layer:
+		layer.set_collision_enabled(false)
+		return metalswim_state
 	
 	# Player isn't moving so they are idle
 	if parent.velocity.x == 0 and direction == 0:

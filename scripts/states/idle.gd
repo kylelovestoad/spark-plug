@@ -35,7 +35,7 @@ func process_input(event: InputEvent) -> State:
 	if parent.move_component.try_movement().x != 0:
 		return move_state
 		
-	if event.is_action("test_metal"):
+	if event.is_action_pressed("test_metal"):
 		return metalswim_state
 		
 	return null
@@ -48,5 +48,10 @@ func process_physics(delta: float) -> State:
 		parent.coyote_time = parent.max_coyote_time
 		parent.coyote_jump = true
 		return fall_state
+	
+	var layer: TileMapLayer = parent.try_collide_metal()
+	if layer:
+		layer.set_collision_enabled(false)
+		return metalswim_state
 	
 	return null

@@ -8,6 +8,8 @@ var move_state: State
 var jump_state: State
 @export
 var grapple_state: State
+@export
+var metalswim_state: State
 
 @export
 var sprite: AnimatedSprite2D
@@ -78,5 +80,10 @@ func process_physics(delta: float) -> State:
 		parent.jump_buffer_time -= delta
 		if parent.jump_buffer_time <= 0.0:
 			parent.jump_buffered = false
+			
+	var layer: TileMapLayer = parent.try_collide_metal()
+	if layer:
+		layer.set_collision_enabled(false)
+		return metalswim_state
 			
 	return null

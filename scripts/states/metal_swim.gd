@@ -47,5 +47,4 @@ func process_physics(delta: float) -> State:
 	
 	parent.move_and_slide()
 	
-	
 	return null

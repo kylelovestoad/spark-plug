@@ -207,7 +207,7 @@ script = ExtResource("1_tlrw5")
 jump_ascend_time = 0.2
 jump_descend_time = 0.17
 max_coyote_time = 0.15
-max_grapple_time = 0.15
+grapple_range = 400.0
 turn_acceleration = 1600
 air_turn_acceleration = 1600
 grapple_state = NodePath("StateMachine/Grapple")
@@ -220,8 +220,6 @@ animations = NodePath("AnimatedSprite2D")
 game_over_scene = ExtResource("2_rofsu")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-limit_smoothed = true
-position_smoothing_enabled = true
 script = SubResource("GDScript_m53ok")
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="."]
@@ -268,12 +266,13 @@ script = ExtResource("3_dv10o")
 starting_state = NodePath("Idle")
 debug_label = NodePath("../Label")
 
-[node name="Fall" type="Node" parent="StateMachine" node_paths=PackedStringArray("idle_state", "move_state", "jump_state", "grapple_state", "sprite")]
+[node name="Fall" type="Node" parent="StateMachine" node_paths=PackedStringArray("idle_state", "move_state", "jump_state", "grapple_state", "metalswim_state", "sprite")]
 script = ExtResource("5_ncn2n")
 idle_state = NodePath("../Idle")
 move_state = NodePath("../Move")
 jump_state = NodePath("../Jump")
 grapple_state = NodePath("../Grapple")
+metalswim_state = NodePath("../MetalSwim")
 sprite = NodePath("../../AnimatedSprite2D")
 
 [node name="Idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("move_state", "jump_state", "fall_state", "grapple_state", "metalswim_state", "animations")]
@@ -285,29 +284,32 @@ grapple_state = NodePath("../Grapple")
 metalswim_state = NodePath("../MetalSwim")
 animations = NodePath("../../AnimatedSprite2D")
 
-[node name="Move" type="Node" parent="StateMachine" node_paths=PackedStringArray("fall_state", "idle_state", "jump_state", "grapple_state", "animations")]
+[node name="Move" type="Node" parent="StateMachine" node_paths=PackedStringArray("fall_state", "idle_state", "jump_state", "grapple_state", "metalswim_state", "animations")]
 script = ExtResource("4_7i425")
 fall_state = NodePath("../Fall")
 idle_state = NodePath("../Idle")
 jump_state = NodePath("../Jump")
 grapple_state = NodePath("../Grapple")
+metalswim_state = NodePath("../MetalSwim")
 animations = NodePath("../../AnimatedSprite2D")
 
-[node name="Jump" type="Node" parent="StateMachine" node_paths=PackedStringArray("fall_state", "idle_state", "move_state", "grapple_state", "jump_sfx", "animations")]
+[node name="Jump" type="Node" parent="StateMachine" node_paths=PackedStringArray("fall_state", "idle_state", "move_state", "grapple_state", "metalswim_state", "jump_sfx", "animations")]
 script = ExtResource("7_rylcs")
 fall_state = NodePath("../Fall")
 idle_state = NodePath("../Idle")
 move_state = NodePath("../Move")
 grapple_state = NodePath("../Grapple")
+metalswim_state = NodePath("../MetalSwim")
 jump_sfx = NodePath("../../JumpSfx")
 animations = NodePath("../../AnimatedSprite2D")
 
-[node name="Grapple" type="Node" parent="StateMachine" node_paths=PackedStringArray("idle_state", "fall_state", "move_state", "jump_state", "grapple_sfx")]
+[node name="Grapple" type="Node" parent="StateMachine" node_paths=PackedStringArray("idle_state", "fall_state", "move_state", "jump_state", "metalswim_state", "grapple_sfx")]
 script = ExtResource("9_e72oe")
 idle_state = NodePath("../Idle")
 fall_state = NodePath("../Fall")
 move_state = NodePath("../Move")
 jump_state = NodePath("../Jump")
+metalswim_state = NodePath("../MetalSwim")
 grapple_sfx = NodePath("../../GrappleSfx")
 
 [node name="MetalSwim" type="Node" parent="StateMachine" node_paths=PackedStringArray("animations")]

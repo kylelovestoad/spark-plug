@@ -8,6 +8,8 @@ var idle_state: State
 var move_state: State
 @export
 var grapple_state: State
+@export
+var metalswim_state: State
 
 @export
 var jump_sfx: AudioStreamPlayer
@@ -100,5 +102,10 @@ func process_physics(delta: float) -> State:
 			return move_state
 			
 		return idle_state
+		
+	var layer: TileMapLayer = parent.try_collide_metal()
+	if layer:
+		layer.set_collision_enabled(false)
+		return metalswim_state
 	
 	return null
