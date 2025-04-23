@@ -14,7 +14,11 @@ var jump_state: State
 
 var grapple_time = 0.0
 
+@export
+var grapple_sfx: AudioStreamPlayer
+
 func enter() -> void:
+	grapple_sfx.play()
 	parent.velocity = Vector2.ZERO
 	parent.jumps = parent.max_jumps # reset jumps
 	parent.grapples -= 1

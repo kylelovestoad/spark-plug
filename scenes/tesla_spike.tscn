@@ -1,0 +1,73 @@
+[gd_scene load_steps=10 format=3 uid="uid://b75ek4dedume1"]
+
+[ext_resource type="Script" uid="uid://cwcdis5d375ux" path="res://scripts/tesla_spike.gd" id="1_1bsta"]
+[ext_resource type="Texture2D" uid="uid://bloktwt2w4chp" path="res://assets/objects/spike_tesla_strip6.png" id="1_vcms5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1bsta"]
+atlas = ExtResource("1_vcms5")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cgqj1"]
+atlas = ExtResource("1_vcms5")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qcvsg"]
+atlas = ExtResource("1_vcms5")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h5cto"]
+atlas = ExtResource("1_vcms5")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dy86n"]
+atlas = ExtResource("1_vcms5")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1leaw"]
+atlas = ExtResource("1_vcms5")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_e6cd5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1bsta")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cgqj1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qcvsg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h5cto")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dy86n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1leaw")
+}],
+"loop": true,
+"name": &"hit",
+"speed": 5.0
+}]
+
+[node name="TeslaSpike" type="Area2D"]
+position = Vector2(0, 8)
+script = ExtResource("1_1bsta")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+sprite_frames = SubResource("SpriteFrames_e6cd5")
+animation = &"hit"
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-8, 0, -8, -7, -6, -10, -4, -13, -3, -13, -1, -7, 1, -7, 3, -13, 4, -13, 6, -10, 8, -7, 8, 0)
+
+[node name="AnimationTimer" type="Timer" parent="."]
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
+[connection signal="animation_looped" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_looped"]
+[connection signal="timeout" from="AnimationTimer" to="." method="_on_animation_timer_timeout"]

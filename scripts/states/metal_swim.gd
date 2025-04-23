@@ -1,10 +1,18 @@
 extends State
 
+@export
+var animations: AnimatedSprite2D
+
+@export
+var swim_anim: String = "swim"
+
 func enter() -> void:
-	return
+	animations.interrupt_anim(swim_anim)
+	
+func exit() -> void:
+	animations.rotation = 0
 
 func process_physics(delta: float) -> State:
-	
 	
 	var input_direction = parent.move_component.try_movement()
 	
@@ -15,6 +23,8 @@ func process_physics(delta: float) -> State:
 
 		# Rotate the swim direction gradually toward input
 		parent.swim_dir = parent.swim_dir.rotated(clamped_angle).normalized()
+		animations.rotation = parent.swim_dir.angle()
+		
 	
 	var target_velocity = parent.swim_dir * parent.move_speed
 	
@@ -29,9 +39,11 @@ func process_physics(delta: float) -> State:
 	if parent.is_on_wall():
 		parent.velocity.x *= -1
 		parent.swim_dir.x *= -1
+		animations.rotation = parent.swim_dir.angle()
 	if parent.is_on_floor() or parent.is_on_ceiling():
 		parent.velocity.y *= -1
 		parent.swim_dir.y *= -1
+		animations.rotation = parent.swim_dir.angle()
 	
 	parent.move_and_slide()
 	

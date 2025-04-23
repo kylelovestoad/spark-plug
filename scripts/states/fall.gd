@@ -9,6 +9,15 @@ var jump_state: State
 @export
 var grapple_state: State
 
+@export
+var sprite: AnimatedSprite2D
+
+@export
+var fall_anim: String = "fall"
+
+func enter() -> void:
+	sprite.interrupt_anim(fall_anim)
+
 # Physics processing for the state
 func process_physics(delta: float) -> State:
 	
@@ -27,6 +36,7 @@ func process_physics(delta: float) -> State:
 
 	# Horizontal air movement
 	var direction = parent.move_component.try_movement().x
+	parent.align_sprite(direction)
 	var target_speed = direction * parent.move_speed
 	var acceleration = parent.air_move_acceleration
 	if sign(direction) != sign(parent.velocity.x) and direction != 0:
@@ -51,6 +61,7 @@ func process_physics(delta: float) -> State:
 
 	# The player is done the jump
 	if parent.is_on_floor():
+		#sprite.play(land_anim)
 		parent.jumps = parent.max_jumps
 		parent.grapples = parent.max_grapples
 		

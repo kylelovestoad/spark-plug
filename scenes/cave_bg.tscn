@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://llagjsau7p5p"]
+
+[ext_resource type="Texture2D" uid="uid://cantko8rnqf3j" path="res://assets/backgrounds/bg_cave1.png" id="1_ows3f"]
+[ext_resource type="Texture2D" uid="uid://632k8agfsiut" path="res://assets/backgrounds/bg_cave2.png" id="2_diu5e"]
+[ext_resource type="Texture2D" uid="uid://732cc8t4t33f" path="res://assets/backgrounds/bg_cave3.png" id="3_a8115"]
+
+[node name="CaveBg" type="Node2D"]
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_ows3f")
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer2"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_diu5e")
+
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="ParallaxBackground"]
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer3"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_a8115")

@@ -9,9 +9,26 @@ var move_state: State
 @export
 var grapple_state: State
 
+@export
+var jump_sfx: AudioStreamPlayer
+
+@export
+var animations: AnimatedSprite2D
+
+@export
+var jump_anim: String = "jump"
+
 # When the state is entered
 func enter() -> void:
 	super()
+	
+	animations.speed_scale = 1
+	
+	jump_sfx.pitch_scale = randf_range(0.9, 1.1)
+	jump_sfx.play()
+	
+	animations.interrupt_anim(jump_anim)
+	
 	parent.velocity.y = parent.jump_velocity # Add jump velocity
 	parent.holding_jump = true # Pressing the jump means it just started holding
 	parent.jump_time = 0.0 # jump time just started
@@ -51,6 +68,8 @@ func process_physics(delta: float) -> State:
 
 	# Horizontal air movement
 	var direction = parent.move_component.try_movement().x
+	parent.align_sprite(direction)
+	
 	var target_speed = direction * parent.move_speed
 	var acceleration = parent.air_move_acceleration
 	if sign(direction) != sign(parent.velocity.x) and direction != 0:

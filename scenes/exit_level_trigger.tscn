@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://bdw7h8n8xwkvr"]
+
+[ext_resource type="Script" uid="uid://bm622kj5o0yba" path="res://exit_level_trigger.gd" id="1_jygck"]
+[ext_resource type="Texture2D" uid="uid://bl5amltfx2vtu" path="res://icon.svg" id="2_t35vo"]
+
+[node name="ExitLevelTrigger" type="Area2D"]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("1_jygck")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_t35vo")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

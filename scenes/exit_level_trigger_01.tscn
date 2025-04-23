@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://dg7sebqpw7fmq"]
+
+[ext_resource type="PackedScene" uid="uid://bdw7h8n8xwkvr" path="res://scenes/exit_level_trigger.tscn" id="1_k4g6a"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m3wad"]
+
+[node name="ExitLevelTrigger" instance=ExtResource("1_k4g6a")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="0"]
+position = Vector2(0, -8)
+shape = SubResource("RectangleShape2D_m3wad")
+
+[node name="Sprite2D" parent="." index="1"]
+position = Vector2(0, -8)
+scale = Vector2(0.165625, 0.171875)

@@ -41,3 +41,6 @@ func process_frame(delta: float) -> void:
 	var new_state = current_state.process_frame(delta)
 	if new_state:
 		transition_to(new_state)
+		
+func reset():
+	transition_to(starting_state)

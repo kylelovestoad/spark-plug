@@ -9,8 +9,16 @@ var jump_state: State
 @export
 var grapple_state: State
 
+@export
+var animations: AnimatedSprite2D
+
+@export
+var move_anim: String = "move"
+
 func enter() -> void:
 	super()
+	animations.interrupt_anim(move_anim)
+	
 
 func process_physics(delta: float) -> State:
 	
@@ -25,6 +33,7 @@ func process_physics(delta: float) -> State:
 	parent.velocity += parent.gravity() * delta
 
 	var direction = parent.move_component.try_movement().x
+	parent.align_sprite(direction)
 	var target_speed = direction * parent.move_speed
 	
 	var acceleration = parent.move_acceleration

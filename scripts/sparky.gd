@@ -1,17 +1,16 @@
+class_name Player
 extends CharacterBody2D
 
 @export
 var move_speed = 150.0
 
 @export
-var jump_buffer_max = 0.2 # The max time before input is no longer buffered
+var jump_buffer_max = 0.15 # The max time before input is no longer buffered
 var jump_buffer_time = 0.0 
 var jump_buffered = false
 
 var jump_time = 0.0 
 var holding_jump = false
-
-var alive = true
 
 @export
 var min_jump_height : float = 10
@@ -73,27 +72,53 @@ var max_jump_hold_time: float = 0.2
 var swim_turn_rate: float = 10
 var swim_dir = Vector2.RIGHT
 
+@export
+var grapple_state: State
+
+@export
+var grapple_particles: CPUParticles2D
+
+@export
+var state_machine: Node
+
+@export
+var move_component: Node
+
+@export
+var health_component: Node
+
+@export
+var camera: Camera2D
+
+@export
+var animations: AnimatedSprite2D
+
+@export
+var max_lives: int = 3
+var lives = max_lives
+
+@export
+var game_over_scene: PackedScene
 
 @onready
-var state_machine = $StateMachine
+var current_spawn = global_position
 
-@onready
-var move_component = $MoveComponent
-
-@onready
-var camera = $Camera2D
+var total_deaths = 0
 
 func _ready() -> void:
+	
 	state_machine.init(self)
 	
 func _draw() -> void:
 	state_machine.draw()	
-	
+		
 func _unhandled_input(event: InputEvent) -> void:
 	state_machine.process_input(event)
 
 func _physics_process(delta: float) -> void:
 	state_machine.process_physics(delta)
+	grapple_particles.emitting = grapples != 0
+		
 
 func _process(delta: float) -> void:
 	queue_redraw()
@@ -130,18 +155,62 @@ func try_grapple():
 	var result = space_state.intersect_ray(query)
 	
 	return result
+	
 
+func update_camera_limits(collision: CollisionShape2D, room_size: Vector2) -> void:
+	var target_top = collision.global_position.y - room_size.y / 2
+	var target_left = collision.global_position.x - room_size.x / 2
+
+	camera.limit_top = target_top
+	camera.limit_left = target_left
+	camera.limit_bottom = target_top + room_size.y
+	camera.limit_right = target_left + room_size.x
+	
+func align_sprite(direction: int):
+	if direction == 1:
+		animations.flip_h = false
+	elif direction == -1:
+		animations.flip_h = true
+	
 
 func _on_room_hit_box_area_entered(area: Area2D) -> void:
-	print("TestME")
 	var collision: CollisionShape2D = area.get_node("CollisionShape2D")
 	# This should never be false if it managed to enter the area	
 	assert(collision)
 
+	# Multiplying by camera zoom gets the correct viewport size 
+	var view_size: Vector2 = get_viewport_rect().size * camera.zoom
+	var room_size: Vector2 = collision.shape.extents * 2
+	var room_center: Vector2 = collision.global_position
 	
-	var room_size = collision.shape.extents * 2
-	print(room_size)
-	camera.limit_top = collision.global_position.y - room_size.y / 2
-	camera.limit_left = collision.global_position.x - room_size.x / 2
-	camera.limit_bottom = camera.limit_top + room_size.y
-	camera.limit_right = camera.limit_left + room_size.x
+	if room_size.y < view_size.y:
+		room_size.y = view_size.y
+		
+	if room_size.x < view_size.x:
+		room_size.x = view_size.x
+			
+	update_camera_limits(collision, room_size)
+
+func _on_died() -> void:
+	health_component.alive = false
+	visible = false
+	lives -= 1
+	if lives == 0:
+		game_over()
+	else:
+		respawn()
+	
+func respawn() -> void:
+	global_position = current_spawn
+	state_machine.reset()
+	jumps = max_jumps
+	grapples = max_grapples
+	velocity = Vector2.ZERO
+	visible = true
+	health_component.respawn()
+	
+func game_over() -> void:
+	get_tree().change_scene_to_packed(game_over_scene)
+	
+func _on_checkpoint_reached(new_positon: Vector2) -> void:
+	current_spawn = new_positon
