@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://ctqh7ecdiu362"]
+[gd_scene load_steps=47 format=3 uid="uid://ctqh7ecdiu362"]
 
 [ext_resource type="Script" uid="uid://p0i6gjcipj4s" path="res://scripts/sparky.gd" id="1_tlrw5"]
 [ext_resource type="PackedScene" uid="uid://blhhoac0yi2jq" path="res://scenes/game_over.tscn" id="2_rofsu"]
@@ -20,11 +20,16 @@
 [ext_resource type="Script" uid="uid://btomn4st8hlp3" path="res://scripts/state_label.gd" id="12_th4ir"]
 [ext_resource type="AudioStream" uid="uid://betc20enhmf6n" path="res://assets/audio/sfx/grapple.wav" id="13_pqgql"]
 [ext_resource type="AudioStream" uid="uid://21o0hi5wpwnq" path="res://assets/audio/sfx/jump.mp3" id="14_v3t6i"]
-[ext_resource type="Script" uid="uid://cprd56n0fr0tt" path="res://scripts/hud.gd" id="20_rofsu"]
+[ext_resource type="Script" uid="uid://cwfeeejsw4at3" path="res://scripts/lives_counter.gd" id="21_sla4h"]
+[ext_resource type="Script" uid="uid://xm5palo6t1bg" path="res://death_counter.gd" id="23_2opaw"]
 
 [sub_resource type="GDScript" id="GDScript_m53ok"]
 script/source = "extends Camera2D
 "
+
+[sub_resource type="Gradient" id="Gradient_rofsu"]
+offsets = PackedFloat32Array(0, 0.848901, 1)
+colors = PackedColorArray(0.27451, 0.635294, 0.996078, 1, 1, 1, 1, 1, 1, 1, 1, 0)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kwfva"]
 atlas = ExtResource("4_jtrsf")
@@ -232,15 +237,18 @@ spread = 0.0
 gravity = Vector2(0, 0)
 angular_velocity_min = -200.09
 angular_velocity_max = 200.0
+orbit_velocity_min = 0.1
+orbit_velocity_max = 0.1
 radial_accel_min = -75.0
 radial_accel_max = -40.0
 angle_max = 18.5
+color_ramp = SubResource("Gradient_rofsu")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -8)
 scale = Vector2(1.013, 1)
 sprite_frames = SubResource("SpriteFrames_enmwf")
-animation = &"jump"
+animation = &"idle"
 script = ExtResource("7_jtrsf")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -329,11 +337,9 @@ stream = ExtResource("13_pqgql")
 
 [node name="JumpSfx" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("14_v3t6i")
+volume_db = -10.0
 
-[node name="CanvasLayer" type="CanvasLayer" parent="." node_paths=PackedStringArray("player", "label")]
-script = ExtResource("20_rofsu")
-player = NodePath("..")
-label = NodePath("HUD/Label")
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="HUD" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -343,11 +349,22 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="CanvasLayer/HUD"]
+[node name="LivesCounter" type="Label" parent="CanvasLayer/HUD" node_paths=PackedStringArray("player")]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 19.0
 text = "Lives"
+script = ExtResource("21_sla4h")
+player = NodePath("../../..")
+
+[node name="DeathCounter" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = -79.0
+offset_top = 19.0
+offset_right = -39.0
+offset_bottom = 38.0
+script = ExtResource("23_2opaw")
 
 [connection signal="area_entered" from="RoomHitBox" to="." method="_on_room_hit_box_area_entered"]
 [connection signal="died" from="HealthComponent" to="." method="_on_died"]
+[connection signal="died" from="HealthComponent" to="CanvasLayer/HUD/DeathCounter" method="_on_died"]

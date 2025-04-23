@@ -204,6 +204,7 @@ func _on_died() -> void:
 	health_component.alive = false
 	visible = false
 	lives -= 1
+	Game.deaths += 1
 	if lives == 0:
 		game_over()
 	else:
